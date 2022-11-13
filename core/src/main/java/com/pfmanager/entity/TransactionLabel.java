@@ -1,9 +1,21 @@
 package com.pfmanager.entity;
 
+import javax.persistence.Entity;
+
+@Entity
 public class TransactionLabel {
+    private Long id;
     private User user;
     private String name;
     private String description;
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
     public User getUser() {
         return user;
     }

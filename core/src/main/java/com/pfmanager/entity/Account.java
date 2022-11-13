@@ -2,13 +2,24 @@ package com.pfmanager.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Entity;
 
+@Entity
 public class Account {
+    private Long id;
     private String number;
     private String name;
     private List<User> owners = new ArrayList<>();
     private Currency currency;
     private Bank bank;
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Account(String name, Currency currency, Bank bank) {
         this.name = name;
