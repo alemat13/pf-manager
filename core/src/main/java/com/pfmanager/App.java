@@ -2,13 +2,13 @@ package com.pfmanager;
 
 import java.util.Date;
 
-import com.pfmanager.entity.Account;
-import com.pfmanager.entity.Bank;
-import com.pfmanager.entity.Currency;
-import com.pfmanager.entity.Transaction;
-import com.pfmanager.entity.TransactionCategory;
-import com.pfmanager.entity.enums.TransactionType;
-import com.pfmanager.entity.User;
+import com.pfmanager.core.entity.Account;
+import com.pfmanager.core.entity.Bank;
+import com.pfmanager.core.entity.Currency;
+import com.pfmanager.core.entity.Transaction;
+import com.pfmanager.core.entity.TransactionCategory;
+import com.pfmanager.core.entity.User;
+import com.pfmanager.core.entity.enums.TransactionType;
 
 /**
  * Hello world!

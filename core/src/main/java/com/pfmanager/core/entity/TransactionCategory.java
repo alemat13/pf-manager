@@ -1,4 +1,4 @@
-package com.pfmanager.entity;
+package com.pfmanager.core.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,12 +6,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class TransactionLabel {
+public class TransactionCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Id Long id;
-    private User user;
     private String name;
-    private String description;
+    private TransactionCategory parent;
+    public TransactionCategory(String name) {
+        this.name = name;
+    }
     
     public Long getId() {
         return id;
@@ -20,22 +22,16 @@ public class TransactionLabel {
     public void setId(Long id) {
         this.id = id;
     }
-    public User getUser() {
-        return user;
-    }
-    public void setUser(User user) {
-        this.user = user;
-    }
     public String getName() {
         return name;
     }
     public void setName(String name) {
         this.name = name;
     }
-    public String getDescription() {
-        return description;
+    public TransactionCategory getParent() {
+        return parent;
     }
-    public void setDescription(String description) {
-        this.description = description;
+    public void setParent(TransactionCategory parent) {
+        this.parent = parent;
     }
 }

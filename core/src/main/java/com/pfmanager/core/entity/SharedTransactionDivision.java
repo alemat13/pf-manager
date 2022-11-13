@@ -1,4 +1,4 @@
-package com.pfmanager.entity;
+package com.pfmanager.core.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -1,4 +1,4 @@
-package com.pfmanager.entity;
+package com.pfmanager.core.entity;
 
 import java.util.Date;
 import java.util.List;
@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.pfmanager.entity.enums.TransactionType;
+import com.pfmanager.core.entity.enums.TransactionType;
 
 @Entity
 public class Transaction {
