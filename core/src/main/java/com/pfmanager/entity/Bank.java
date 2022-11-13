@@ -1,8 +1,20 @@
 package com.pfmanager.entity;
 
+import javax.persistence.Entity;
+
+@Entity
 public class Bank {
+    private Long id;
     private String name;
     private String description;
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
     public Bank(String name, String description) {
         this.name = name;
         this.description = description;

@@ -3,7 +3,11 @@ package com.pfmanager.entity;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+
+@Entity
 public class Transaction {
+    private Long id;
     private Date transactionDate;
     private Date postingDate;
     private Double amount;
@@ -18,6 +22,14 @@ public class Transaction {
         this.postingDate = postingDate;
         this.amount = amount;
         this.description = description;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
     public Date getTransactionDate() {
         return transactionDate;
