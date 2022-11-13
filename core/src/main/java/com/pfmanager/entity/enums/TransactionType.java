@@ -1,4 +1,4 @@
-package com.pfmanager.entity;
+package com.pfmanager.entity.enums;
 
 public enum TransactionType {
     WITHDRAWAL,

@@ -7,7 +7,7 @@ import com.pfmanager.entity.Bank;
 import com.pfmanager.entity.Currency;
 import com.pfmanager.entity.Transaction;
 import com.pfmanager.entity.TransactionCategory;
-import com.pfmanager.entity.TransactionType;
+import com.pfmanager.entity.enums.TransactionType;
 import com.pfmanager.entity.User;
 
 /**
