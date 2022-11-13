@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Transaction {
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private @Id Long id;
     private Date transactionDate;
     private Date postingDate;
     private Double amount;
