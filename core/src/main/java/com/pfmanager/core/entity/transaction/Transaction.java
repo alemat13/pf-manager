@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +15,6 @@ import javax.persistence.OneToMany;
 import com.pfmanager.core.entity.Account;
 import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.TransactionLabel;
-import com.pfmanager.core.entity.enums.TransactionType;
 
 @Entity
 public class Transaction {
@@ -33,7 +30,6 @@ public class Transaction {
     private @ManyToOne(
         fetch = FetchType.LAZY
     ) Account account;
-    private @Enumerated(EnumType.ORDINAL) TransactionType type;
     private @ManyToOne(
         fetch = FetchType.LAZY
     ) TransactionCategory category;
@@ -105,14 +101,6 @@ public class Transaction {
 
     public void setAccount(Account account) {
         this.account = account;
-    }
-
-    public TransactionType getType() {
-        return type;
-    }
-
-    public void setType(TransactionType type) {
-        this.type = type;
     }
 
     public TransactionCategory getCategory() {
