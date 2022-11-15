@@ -6,42 +6,27 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.pfmanager.core.entity.SharedTransactionDivision;
 
 @Entity
-public class SharedTransaction implements Transaction {
-    private @Id @GeneratedValue(
-        strategy = GenerationType.IDENTITY
-    ) Long  id;
+public class SharedTransaction extends Transaction {
     private @OneToMany (
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
-    ) List<RealTransaction> originalTransactions = new ArrayList<>();
+    ) List<Transaction> originalTransactions = new ArrayList<>();
     private @OneToMany (
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
     ) List<SharedTransactionDivision> division;
-    
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<RealTransaction> getOriginalTransactions() {
+    public List<Transaction> getOriginalTransactions() {
         return originalTransactions;
     }
 
-    public void setOriginalTransactions(List<RealTransaction> originalTransactions) {
+    public void setOriginalTransactions(List<Transaction> originalTransactions) {
         this.originalTransactions = originalTransactions;
     }
 

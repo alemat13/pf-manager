@@ -8,7 +8,7 @@ import com.pfmanager.core.entity.Currency;
 import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.User;
 import com.pfmanager.core.entity.enums.TransactionType;
-import com.pfmanager.core.entity.transaction.RealTransaction;
+import com.pfmanager.core.entity.transaction.OriginalTransaction;
 
 /**
  * Hello world!
@@ -35,9 +35,9 @@ public class App
         TransactionCategory groceries = new TransactionCategory("Groceries");
         groceries.setParent(new TransactionCategory("Every day expenses"));
 
-        RealTransaction carrefour = new RealTransaction(new Date(), 33.56, "Carrefour");
+        OriginalTransaction carrefour = new OriginalTransaction(new Date(), 33.56, "Carrefour");
         carrefour.setCategory(groceries);
-        carrefour.setSourceAccount(jointAccount);
+        carrefour.setAccount(jointAccount);
         carrefour.setType(TransactionType.TRANSFER);
     }
 }
