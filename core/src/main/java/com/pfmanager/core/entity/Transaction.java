@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,11 +20,11 @@ import com.pfmanager.core.entity.enums.TransactionType;
 public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Id Long id;
-    private @Column Date transactionDate;
-    private @Column Date postingDate;
-    private @Column Double amount;
-    private @Column String description;
-    private @Column String memo;
+    private Date transactionDate;
+    private Date postingDate;
+    private Double amount;
+    private String description;
+    private String memo;
     private @ManyToOne(
         fetch = FetchType.LAZY
     ) Account sourceAccount;

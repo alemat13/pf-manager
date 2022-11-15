@@ -1,6 +1,5 @@
 package com.pfmanager.core.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,8 +11,8 @@ public class TransactionLabel {
         strategy = GenerationType.IDENTITY
     ) Long id;
     private User user;
-    private @Column String name;
-    private @Column String description;
+    private String name;
+    private String description;
     
     public Long getId() {
         return id;

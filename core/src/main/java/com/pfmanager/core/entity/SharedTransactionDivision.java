@@ -1,6 +1,5 @@
 package com.pfmanager.core.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,7 +13,7 @@ public class SharedTransactionDivision {
         strategy = GenerationType.IDENTITY
     ) Long  id;
     private @ManyToOne(fetch = FetchType.LAZY) User user;
-    private @Column Double part;
+    private Double part;
     
     public Long getId() {
         return id;

@@ -1,12 +1,11 @@
 package com.pfmanager.core.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
 public class User {
-    private @Column String name;
-    private @Column String emailAddress;
+    private String name;
+    private String emailAddress;
     
     public String getName() {
         return name;

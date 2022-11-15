@@ -1,6 +1,5 @@
 package com.pfmanager.core.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,9 +10,9 @@ public class Currency {
     private @Id @GeneratedValue(
         strategy = GenerationType.IDENTITY
     ) Long id;
-    private @Column String name;
-    private @Column String code;
-    private @Column String description;
+    private String name;
+    private String code;
+    private String description;
     
     public Long getId() {
         return id;

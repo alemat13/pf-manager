@@ -1,6 +1,5 @@
 package com.pfmanager.core.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,7 +11,7 @@ public class TransactionCategory {
     private @Id @GeneratedValue(
         strategy = GenerationType.IDENTITY
     ) Long id;
-    private @Column String name;
+    private String name;
     private TransactionCategory parent;
 
     public TransactionCategory(String name) {
