@@ -1,4 +1,4 @@
-package com.pfmanager.core.entity;
+package com.pfmanager.core.entity.transaction;
 
 import java.util.Date;
 import java.util.List;
@@ -14,10 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.pfmanager.core.entity.Account;
+import com.pfmanager.core.entity.TransactionCategory;
+import com.pfmanager.core.entity.TransactionLabel;
 import com.pfmanager.core.entity.enums.TransactionType;
 
 @Entity
-public class Transaction {
+public class RealTransaction implements Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Id Long id;
     private Date transactionDate;
@@ -41,7 +44,7 @@ public class Transaction {
         orphanRemoval = true
     ) List<TransactionLabel> labels;
 
-    public Transaction(Date postingDate, Double amount, String description) {
+    public RealTransaction(Date postingDate, Double amount, String description) {
         this.postingDate = postingDate;
         this.amount = amount;
         this.description = description;

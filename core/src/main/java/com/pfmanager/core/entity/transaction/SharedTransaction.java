@@ -1,4 +1,4 @@
-package com.pfmanager.core.entity;
+package com.pfmanager.core.entity.transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.pfmanager.core.entity.SharedTransactionDivision;
+
 @Entity
-public class SharedTransaction {
+public class SharedTransaction implements Transaction {
     private @Id @GeneratedValue(
         strategy = GenerationType.IDENTITY
     ) Long  id;
@@ -20,7 +22,7 @@ public class SharedTransaction {
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
-    ) List<Transaction> originalTransactions = new ArrayList<>();
+    ) List<RealTransaction> originalTransactions = new ArrayList<>();
     private @OneToMany (
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
@@ -35,11 +37,11 @@ public class SharedTransaction {
         this.id = id;
     }
 
-    public List<Transaction> getOriginalTransactions() {
+    public List<RealTransaction> getOriginalTransactions() {
         return originalTransactions;
     }
 
-    public void setOriginalTransactions(List<Transaction> originalTransactions) {
+    public void setOriginalTransactions(List<RealTransaction> originalTransactions) {
         this.originalTransactions = originalTransactions;
     }
 

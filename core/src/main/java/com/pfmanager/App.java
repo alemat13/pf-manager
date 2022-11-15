@@ -5,10 +5,10 @@ import java.util.Date;
 import com.pfmanager.core.entity.Account;
 import com.pfmanager.core.entity.Bank;
 import com.pfmanager.core.entity.Currency;
-import com.pfmanager.core.entity.Transaction;
 import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.User;
 import com.pfmanager.core.entity.enums.TransactionType;
+import com.pfmanager.core.entity.transaction.RealTransaction;
 
 /**
  * Hello world!
@@ -35,7 +35,7 @@ public class App
         TransactionCategory groceries = new TransactionCategory("Groceries");
         groceries.setParent(new TransactionCategory("Every day expenses"));
 
-        Transaction carrefour = new Transaction(new Date(), 33.56, "Carrefour");
+        RealTransaction carrefour = new RealTransaction(new Date(), 33.56, "Carrefour");
         carrefour.setCategory(groceries);
         carrefour.setSourceAccount(jointAccount);
         carrefour.setType(TransactionType.TRANSFER);
