@@ -10,31 +10,19 @@ import javax.persistence.OneToMany;
 
 
 @Entity
-public class SharedTransaction extends Transaction {
+public class SharedTransaction extends SplittedTransaction {
     private @OneToMany (
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
-    ) List<Transaction> originalTransactions = new ArrayList<>();
-    private @OneToMany (
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    ) List<SharedTransactionDivision> division;
+    ) List<SharedTransactionDivision> targets = new ArrayList<SharedTransactionDivision>();
+    private RoundSharingMethod roundSharingMethod;
 
-    public List<Transaction> getOriginalTransactions() {
-        return originalTransactions;
+    public RoundSharingMethod getRoundSharingMethod() {
+        return roundSharingMethod;
     }
 
-    public void setOriginalTransactions(List<Transaction> originalTransactions) {
-        this.originalTransactions = originalTransactions;
-    }
-
-    public List<SharedTransactionDivision> getDivision() {
-        return division;
-    }
-
-    public void setDivision(List<SharedTransactionDivision> division) {
-        this.division = division;
+    public void setRoundSharingMethod(RoundSharingMethod roundSharingMethod) {
+        this.roundSharingMethod = roundSharingMethod;
     }
 }
