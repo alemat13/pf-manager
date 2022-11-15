@@ -7,7 +7,7 @@ import java.util.List;
 import javax.persistence.Entity;
 
 @Entity
-public class SplittedTransaction extends Transaction {
+public class SplittedTransaction {
     private Transaction originalTransaction;
     private List<Transaction> targetTransactions = new ArrayList<>();
     public List<Transaction> getTargetTransactions() {
@@ -22,8 +22,4 @@ public class SplittedTransaction extends Transaction {
     public void setOriginalTransaction(Transaction originalTransaction) {
         this.originalTransaction = originalTransaction;
     }
-    public SplittedTransaction(Date postingDate, Double amount, String description) {
-        super(postingDate, amount, description);
-    }
-    
 }

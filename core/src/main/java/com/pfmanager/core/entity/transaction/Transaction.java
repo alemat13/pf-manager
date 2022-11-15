@@ -20,7 +20,7 @@ import com.pfmanager.core.entity.TransactionLabel;
 import com.pfmanager.core.entity.enums.TransactionType;
 
 @Entity
-public abstract class Transaction {
+public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Id Long id;
     private Date transactionDate;
@@ -28,12 +28,11 @@ public abstract class Transaction {
     private Double amount;
     private String description;
     private String memo;
+    private Boolean active = true;
+
     private @ManyToOne(
         fetch = FetchType.LAZY
     ) Account account;
-    private@ManyToOne(
-        fetch = FetchType.LAZY
-    ) Account targetAccount;
     private @Enumerated(EnumType.ORDINAL) TransactionType type;
     private @ManyToOne(
         fetch = FetchType.LAZY
@@ -108,14 +107,6 @@ public abstract class Transaction {
         this.account = account;
     }
 
-    public Account getTargetAccount() {
-        return targetAccount;
-    }
-
-    public void setTargetAccount(Account targetAccount) {
-        this.targetAccount = targetAccount;
-    }
-
     public TransactionType getType() {
         return type;
     }
@@ -138,5 +129,13 @@ public abstract class Transaction {
 
     public void setLabels(List<TransactionLabel> labels) {
         this.labels = labels;
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
