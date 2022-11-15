@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pfmanager.core.entity.transaction.SubTransaction;
 import com.pfmanager.core.entity.transaction.SplittedTransaction;
 import com.pfmanager.core.entity.transaction.Transaction;
 import com.pfmanager.core.repository.transaction.SplittedTransactionRepository;
@@ -18,7 +19,7 @@ public class TransactionService {
     public Iterable<Transaction> findAllTransactions() {
         return this.transactionRepository.findAll();
     }
-    public SplittedTransaction splitTransaction(Transaction original, List<Transaction> targets) {
+    public SplittedTransaction splitTransaction(Transaction original, List<SubTransaction> targets) {
         if(!original.getActive()) {
             throw new Error("The original transaction must be active");
         }

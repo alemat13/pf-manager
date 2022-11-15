@@ -7,7 +7,7 @@ import javax.persistence.ManyToOne;
 import com.pfmanager.core.entity.User;
 
 @Entity
-public class SharedTransactionDivision extends Transaction {
+public class SubTransaction extends Transaction {
     private @ManyToOne(fetch = FetchType.LAZY) User user;
     private Double part;
 
