@@ -1,6 +1,5 @@
 package com.pfmanager.core.entity.transaction;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -19,7 +17,7 @@ import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.TransactionLabel;
 
 @Entity
-public class Transaction implements TransactionInterface {
+public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Id Long id;
     private Date transactionDate;
@@ -39,6 +37,8 @@ public class Transaction implements TransactionInterface {
         cascade = CascadeType.ALL,
         orphanRemoval = true
     ) List<TransactionLabel> labels;
+    private @OneToMany(mappedBy = "sourceTransaction") List<TransactionMapping> sourceMappings;
+    private @OneToMany(mappedBy = "targetTransaction") List<TransactionMapping> targetMappings;
 
     public Transaction(Date postingDate, Double amount, String description) {
         this.postingDate = postingDate;
@@ -126,5 +126,21 @@ public class Transaction implements TransactionInterface {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public List<TransactionMapping> getSourceMappings() {
+        return sourceMappings;
+    }
+
+    public void setSourceMappings(List<TransactionMapping> sourceMapping) {
+        this.sourceMappings = sourceMapping;
+    }
+
+    public List<TransactionMapping> getTargetMappings() {
+        return targetMappings;
+    }
+
+    public void setTargetMappings(List<TransactionMapping> targetMapping) {
+        this.targetMappings = targetMapping;
     }
 }
