@@ -1,5 +1,6 @@
 package com.pfmanager.core.entity.transaction;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -17,7 +19,7 @@ import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.TransactionLabel;
 
 @Entity
-public class Transaction {
+public class Transaction implements TransactionInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Id Long id;
     private Date transactionDate;
@@ -26,7 +28,6 @@ public class Transaction {
     private String description;
     private String memo;
     private Boolean active = true;
-
     private @ManyToOne(
         fetch = FetchType.LAZY
     ) Account account;

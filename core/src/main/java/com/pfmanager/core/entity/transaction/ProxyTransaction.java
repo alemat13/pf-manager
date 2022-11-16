@@ -9,8 +9,12 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 @Entity
-public class SplittedTransaction {
-    private Transaction originalTransaction;
+public class ProxyTransaction {
+    private @OneToMany(
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    ) List<Transaction> sourceTransactions = new ArrayList<>();
     private @OneToMany (
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
@@ -22,11 +26,11 @@ public class SplittedTransaction {
     public void setTargetTransactions(List<SubTransaction> targetTransactions) {
         this.targetTransactions = targetTransactions;
     }
-    public Transaction getOriginalTransaction() {
-        return originalTransaction;
+    public List<Transaction> getSourceTransactions() {
+        return sourceTransactions;
     }
-    public void setOriginalTransaction(Transaction originalTransaction) {
-        this.originalTransaction = originalTransaction;
+    public void setSourceTransactions(List<Transaction> originalTransactions) {
+        this.sourceTransactions = originalTransactions;
     }
     private RoundSharingMethod roundSharingMethod;
 
