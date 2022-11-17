@@ -9,8 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Account {
@@ -19,10 +19,9 @@ public class Account {
     ) Long id;
     private String number;
     private String name;
-    private @OneToMany (
+    private @ManyToMany (
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
+        cascade = CascadeType.ALL
     ) List<User> owners = new ArrayList<>();
     private @ManyToOne(fetch = FetchType.LAZY) Currency currency;
     private @ManyToOne(

@@ -3,8 +3,9 @@ package com.pfmanager.web;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.pfmanager.core.entity.Account;
@@ -18,7 +19,6 @@ import com.pfmanager.core.service.TransactionService;
 import com.pfmanager.core.service.UserService;
 
 @Component
-@ComponentScan
 public class DataLoader {
     @Autowired
     private UserService userService;
@@ -29,9 +29,9 @@ public class DataLoader {
 
     public @Autowired DataLoader() {
         System.out.println("passe-t-on par là ?");
-        loadData();
     }
 
+    @PostConstruct
     private void loadData()
     {
         User pierre = this.userService.saveUser(new User("Pierre", "pierre@gmail.com"));
@@ -54,14 +54,17 @@ public class DataLoader {
             euro,
             this.accountService.saveBank(new Bank("HSBC"))
         );
-
-        pierreAccount.getOwners().add(pierre);
-        paulAccount.getOwners().add(paul);
-        jointAccount.getOwners().addAll(Arrays.asList(pierre, paul));
         this.accountService.saveAllAcounts(Arrays.asList(pierreAccount, paulAccount, jointAccount));
 
+        pierreAccount.getOwners().add(pierre);
+        this.accountService.saveAccount(pierreAccount);
+        paulAccount.getOwners().add(paul);
+        this.accountService.saveAccount(paulAccount);
+        jointAccount.getOwners().addAll(Arrays.asList(pierre, paul));
+        this.accountService.saveAccount(jointAccount);
+
         TransactionCategory groceries = new TransactionCategory("Groceries");
-        groceries.setParent(this.transactionService.save(new TransactionCategory("Every day expenses")));
+        groceries.setParent(new TransactionCategory("Every day expenses"));
         this.transactionService.save(groceries);
 
         Transaction carrefour = new Transaction(new Date(), 33.56, "Carrefour");

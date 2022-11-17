@@ -49,4 +49,5 @@ public class Currency {
         this.name = name;
         this.code = code;
     }
+    public Currency() { }
 }
