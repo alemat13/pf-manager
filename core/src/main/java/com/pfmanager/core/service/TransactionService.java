@@ -1,5 +1,8 @@
 package com.pfmanager.core.service;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,15 +33,20 @@ public class TransactionService {
         return this.transactionRepository.findAll();
     }
 
-    private Double getTotalAmount(List<Transaction> transactions) {
-        return transactions.stream().map(t -> t.getAmount()).reduce(0.0, (a, b) -> a + b);
+    private BigDecimal getTotalAmount(List<Transaction> transactions) {
+        return transactions.stream().map(t -> t.getAmount()).reduce(
+            BigDecimal.ZERO,
+            (a, b) -> a.add(b).setScale(2, RoundingMode.HALF_EVEN)
+        ).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     private Iterable<TransactionMapping> createTransactionMappings(List<Transaction> sourceTransactions, List<Transaction> targetTransactions) {
         if(sourceTransactions.stream().filter(t -> ! t.getActive()).count() > 0) {
             throw new Error("All source transactions must be active");
         }
-        if( this.getTotalAmount(sourceTransactions) != this.getTotalAmount(targetTransactions)) {
+        BigDecimal sourceTotalAmount = this.getTotalAmount(sourceTransactions);
+        BigDecimal targetTotalAmount = this.getTotalAmount(targetTransactions);
+        if( ! sourceTotalAmount.equals(targetTotalAmount) ) {
             throw new Error("The sum of the source transaction amount is not equal to the sum of targets");
         }
         List<TransactionMapping> transactionMappings = new ArrayList<>();
@@ -108,9 +116,9 @@ public class TransactionService {
         return this.transactionCategoryRepository.save(transactionCategory);
     }
 
-    public Iterable<TransactionMapping> shareTransaction(Transaction sourceTransaction, HashMap<User, Double> splitMapping, User roundingAdjustUser) {
-        List<Transaction> targetTransactions = new ArrayList<>();
-        Double partSum = splitMapping.entrySet().stream().map(k -> k.getValue()).reduce(0.0, (a, b) -> a + b);
+    public Iterable<TransactionMapping> shareTransaction(Transaction sourceTransaction, HashMap<User, BigDecimal> splitMapping, User roundingAdjustUser) {
+        HashMap<User, Transaction> targetTransactions = new HashMap<>();
+        BigDecimal partSum = splitMapping.entrySet().stream().map(k -> k.getValue()).reduce(BigDecimal.ZERO, BigDecimal::add);
         splitMapping.forEach((user, part) -> {
             Transaction transaction = new Transaction();
             transaction.setCategory(sourceTransaction.getCategory());
@@ -121,16 +129,22 @@ public class TransactionService {
             transaction.setTransactionDate(sourceTransaction.getTransactionDate());
 
             transaction.setAccount(null);
-            transaction.setAmount(roundCent(sourceTransaction.getAmount() * part / partSum));
-            targetTransactions.add(transaction);
+            transaction.setAmount(roundCent(sourceTransaction.getAmount().multiply(part).divide(partSum).setScale(2, RoundingMode.HALF_EVEN)));
+            targetTransactions.put(user, transaction);
         });
-        Double totalAmount = targetTransactions.stream().map(t -> t.getAmount()).reduce(0.0, (a, b) -> a + b);
-        // @TODO : to be continued
-        return this.splitTransaction(sourceTransaction, targetTransactions);
+        BigDecimal totalRoundedAmounts = targetTransactions.entrySet().stream().map(
+            t -> t.getValue().getAmount()
+        ).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_EVEN);
+        targetTransactions.get(roundingAdjustUser).setAmount(
+            sourceTransaction.getAmount().subtract(
+                totalRoundedAmounts.subtract(
+                    targetTransactions.get(roundingAdjustUser).getAmount()
+                )
+            ).setScale(2, RoundingMode.HALF_EVEN)
+        );
+        return this.splitTransaction(sourceTransaction, new ArrayList<Transaction>(targetTransactions.values()));
     }
-    private static Double roundCent(Double value) {
-        Double output = value * 100;
-        output = (double) Math.round(value);
-        return output / 100;
+    private static BigDecimal roundCent(BigDecimal value) {
+        return value.round(new MathContext(2, RoundingMode.HALF_EVEN));
     }
 }

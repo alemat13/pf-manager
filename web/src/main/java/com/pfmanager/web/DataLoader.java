@@ -1,5 +1,6 @@
 package com.pfmanager.web;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,9 +74,9 @@ public class DataLoader {
         carrefour.setAccount(jointAccount);
         this.transactionService.createTransaction(carrefour);
 
-        HashMap<User, Double> carrefourMapping = new HashMap<>();
-        carrefourMapping.put(paul, 2.0);
-        carrefourMapping.put(pierre, 3.0);
+        HashMap<User, BigDecimal> carrefourMapping = new HashMap<>();
+        carrefourMapping.put(paul, new BigDecimal(2));
+        carrefourMapping.put(pierre, new BigDecimal(3.0));
 
         this.transactionService.shareTransaction(
             carrefour,

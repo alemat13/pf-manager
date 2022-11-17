@@ -1,5 +1,7 @@
 package com.pfmanager.core.entity.transaction;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class Transaction {
     ) Long id;
     private Date transactionDate;
     private Date postingDate;
-    private Double amount;
+    private BigDecimal amount;
     private String description;
     private String memo;
     private Boolean active = true;
@@ -41,7 +43,7 @@ public class Transaction {
     private @OneToMany(mappedBy = "sourceTransaction") List<TransactionMapping> sourceMappings;
     private @OneToMany(mappedBy = "targetTransaction") List<TransactionMapping> targetMappings;
 
-    public Transaction(Date postingDate, Double amount, String description) {
+    public Transaction(Date postingDate, BigDecimal amount, String description) {
         this.postingDate = postingDate;
         this.amount = amount;
         this.description = description;
@@ -49,6 +51,13 @@ public class Transaction {
 
     public Transaction() { }
     
+    public Transaction(Date postingDate, double amount, String description) {
+        this.postingDate = postingDate;
+        this.amount = new BigDecimal(amount).setScale(2, RoundingMode.HALF_EVEN);
+        this.description = description;
+
+    }
+
     public Long getId() {
         return id;
     }
@@ -73,11 +82,11 @@ public class Transaction {
         this.postingDate = postingDate;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

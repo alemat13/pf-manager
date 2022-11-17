@@ -1,5 +1,7 @@
 package com.pfmanager.core.entity.transaction;
 
+import java.math.BigDecimal;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +29,7 @@ public class TransactionMapping {
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL
     ) User user;
-    private Double part;
+    private BigDecimal part;
 
     public Transaction getTargetTransaction() {
         return targetTransaction;
@@ -63,11 +65,11 @@ public class TransactionMapping {
         this.user = user;
     }
 
-    public Double getPart() {
+    public BigDecimal getPart() {
         return part;
     }
     
-    public void setPart(Double part) {
+    public void setPart(BigDecimal part) {
         this.part = part;
     }
 }
