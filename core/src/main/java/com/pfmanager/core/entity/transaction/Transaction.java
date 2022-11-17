@@ -37,8 +37,7 @@ public class Transaction {
     ) TransactionCategory category;
     private @OneToMany (
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
+        cascade = CascadeType.ALL
     ) List<TransactionLabel> labels;
     private @OneToMany(mappedBy = "sourceTransaction") List<TransactionMapping> sourceMappings;
     private @OneToMany(mappedBy = "targetTransaction") List<TransactionMapping> targetMappings;

@@ -52,14 +52,14 @@ public class TransactionService {
         List<TransactionMapping> transactionMappings = new ArrayList<>();
         sourceTransactions.forEach(sourceTransaction -> {
             targetTransactions.forEach(targetTransaction -> {
+                targetTransaction.setActive(true);
+                targetTransaction = this.transactionRepository.save(targetTransaction);
                 TransactionMapping transactionMapping = new TransactionMapping();
                 transactionMapping.setSourceTransaction(sourceTransaction);
                 transactionMapping.setTargetTransaction(targetTransaction);
-                targetTransaction.setActive(true);
-                this.transactionRepository.save(targetTransaction);
+                transactionMappings.add(transactionMapping);
             });
             sourceTransaction.setActive(false);
-            this.transactionRepository.save(sourceTransaction);
         });
         return this.transactionMappingRepository.saveAll(transactionMappings);
     }

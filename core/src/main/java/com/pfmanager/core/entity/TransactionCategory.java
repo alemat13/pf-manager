@@ -19,6 +19,8 @@ public class TransactionCategory {
         cascade = CascadeType.ALL
     ) TransactionCategory parent;
 
+    public TransactionCategory() {}
+    
     public TransactionCategory(String name) {
         this.name = name;
     }
