@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pfmanager.core.entity.transaction.TransactionMapping;
+import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.transaction.Transaction;
+import com.pfmanager.core.repository.transaction.TransactionCategoryRepository;
 import com.pfmanager.core.repository.transaction.TransactionMappingRepository;
 import com.pfmanager.core.repository.transaction.TransactionRepository;
 
@@ -16,6 +18,7 @@ import com.pfmanager.core.repository.transaction.TransactionRepository;
 public class TransactionService {
     private @Autowired TransactionRepository transactionRepository;
     private @Autowired TransactionMappingRepository transactionMappingRepository;
+    private @Autowired TransactionCategoryRepository transactionCategoryRepository;
 
     public Transaction createTransaction(Transaction transaction) {
         return this.transactionRepository.save(transaction);
@@ -97,5 +100,9 @@ public class TransactionService {
 
     public void unsplitTransaction(Transaction sourceTransaction) {
         this.deleteTransactionMapping(sourceTransaction, null);
+    }
+
+    public TransactionCategory save(TransactionCategory transactionCategory) {
+        return this.transactionCategoryRepository.save(transactionCategory);
     }
 }

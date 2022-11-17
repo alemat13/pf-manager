@@ -1,5 +1,7 @@
 package com.pfmanager.core.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +52,9 @@ public class AccountService {
     
     public Currency saveCurrency(Currency currency) {
         return this.currencyRepository.save(currency);
+    }
+
+    public Iterable<Account> saveAllAcounts(List<Account> accounts) {
+        return this.accountRepository.saveAll(accounts);
     }
 }
