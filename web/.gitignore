@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Dev VM conf ###
+setEnv.ps1
+
+### H2 Database ###
+/db.h2*
