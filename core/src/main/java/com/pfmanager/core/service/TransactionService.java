@@ -2,6 +2,7 @@ package com.pfmanager.core.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.pfmanager.core.entity.transaction.TransactionMapping;
 import com.pfmanager.core.entity.TransactionCategory;
+import com.pfmanager.core.entity.User;
 import com.pfmanager.core.entity.transaction.Transaction;
 import com.pfmanager.core.repository.transaction.TransactionCategoryRepository;
 import com.pfmanager.core.repository.transaction.TransactionMappingRepository;
@@ -104,5 +106,31 @@ public class TransactionService {
 
     public TransactionCategory save(TransactionCategory transactionCategory) {
         return this.transactionCategoryRepository.save(transactionCategory);
+    }
+
+    public Iterable<TransactionMapping> shareTransaction(Transaction sourceTransaction, HashMap<User, Double> splitMapping, User roundingAdjustUser) {
+        List<Transaction> targetTransactions = new ArrayList<>();
+        Double partSum = splitMapping.entrySet().stream().map(k -> k.getValue()).reduce(0.0, (a, b) -> a + b);
+        splitMapping.forEach((user, part) -> {
+            Transaction transaction = new Transaction();
+            transaction.setCategory(sourceTransaction.getCategory());
+            transaction.setDescription(sourceTransaction.getDescription());
+            transaction.setLabels(sourceTransaction.getLabels());
+            transaction.setMemo(sourceTransaction.getMemo());
+            transaction.setPostingDate(sourceTransaction.getPostingDate());
+            transaction.setTransactionDate(sourceTransaction.getTransactionDate());
+
+            transaction.setAccount(null);
+            transaction.setAmount(roundCent(sourceTransaction.getAmount() * part / partSum));
+            targetTransactions.add(transaction);
+        });
+        Double totalAmount = targetTransactions.stream().map(t -> t.getAmount()).reduce(0.0, (a, b) -> a + b);
+        // @TODO : to be continued
+        return this.splitTransaction(sourceTransaction, targetTransactions);
+    }
+    private static Double roundCent(Double value) {
+        Double output = value * 100;
+        output = (double) Math.round(value);
+        return output / 100;
     }
 }

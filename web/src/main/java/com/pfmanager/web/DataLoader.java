@@ -2,6 +2,7 @@ package com.pfmanager.web;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
 
@@ -71,6 +72,16 @@ public class DataLoader {
         carrefour.setCategory(groceries);
         carrefour.setAccount(jointAccount);
         this.transactionService.createTransaction(carrefour);
+
+        HashMap<User, Double> carrefourMapping = new HashMap<>();
+        carrefourMapping.put(paul, 2.0);
+        carrefourMapping.put(pierre, 3.0);
+
+        this.transactionService.shareTransaction(
+            carrefour,
+            carrefourMapping,
+            paul
+        );
     }
 
     public UserService getUserService() {
