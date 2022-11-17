@@ -1,4 +1,4 @@
-package com.pfmanager.demo;
+package com.pfmanager.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

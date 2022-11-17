@@ -1,9 +1,10 @@
-package com.pfmanager;
+package com.pfmanager.web;
 
 import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.pfmanager.core.entity.Account;
@@ -17,6 +18,10 @@ import com.pfmanager.core.service.TransactionService;
 import com.pfmanager.core.service.UserService;
 
 @Component
+@ComponentScan(basePackages = {
+    "com.pfmanager.core.service",
+    "com.pfmanager.core.service.transaction"
+})
 public class DataLoader {
     private @Autowired UserService userService;
     private @Autowired AccountService accountService;
@@ -63,5 +68,17 @@ public class DataLoader {
         carrefour.setCategory(groceries);
         carrefour.setAccount(jointAccount);
         this.transactionService.createTransaction(carrefour);
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public AccountService getAccountService() {
+        return accountService;
+    }
+
+    public TransactionService getTransactionService() {
+        return transactionService;
     }
 }

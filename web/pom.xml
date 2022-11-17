@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pfmanager</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>web</name>
 	<description>Personal Finance Manager</description>
