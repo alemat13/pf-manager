@@ -14,8 +14,9 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Account {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private @Id Long  id;
+    private @Id @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    ) Long id;
     private String number;
     private String name;
     private @OneToMany (

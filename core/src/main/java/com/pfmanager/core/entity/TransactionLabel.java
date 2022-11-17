@@ -10,7 +10,6 @@ public class TransactionLabel {
     private @Id @GeneratedValue(
         strategy = GenerationType.IDENTITY
     ) Long id;
-    private User user;
     private String name;
     private String description;
     
@@ -20,14 +19,6 @@ public class TransactionLabel {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getName() {

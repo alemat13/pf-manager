@@ -1,18 +1,23 @@
 package com.pfmanager.core.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class TransactionCategory {
-    
     private @Id @GeneratedValue(
         strategy = GenerationType.IDENTITY
     ) Long id;
     private String name;
-    private TransactionCategory parent;
+    private @ManyToOne (
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL
+    ) TransactionCategory parent;
 
     public TransactionCategory(String name) {
         this.name = name;

@@ -7,8 +7,9 @@ import javax.persistence.Id;
 
 @Entity
 public class Bank {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private @Id Long  id;
+    private @Id @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    ) Long id;
     private String name;
     private String description;
     

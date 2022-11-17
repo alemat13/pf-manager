@@ -18,8 +18,9 @@ import com.pfmanager.core.entity.TransactionLabel;
 
 @Entity
 public class Transaction {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private @Id Long id;
+    private @Id @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    ) Long id;
     private Date transactionDate;
     private Date postingDate;
     private Double amount;

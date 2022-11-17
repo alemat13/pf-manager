@@ -18,14 +18,14 @@ import com.pfmanager.core.service.TransactionService;
 import com.pfmanager.core.service.UserService;
 
 @Component
-@ComponentScan(basePackages = {
-    "com.pfmanager.core.service",
-    "com.pfmanager.core.service.transaction"
-})
+@ComponentScan
 public class DataLoader {
-    private @Autowired UserService userService;
-    private @Autowired AccountService accountService;
-    private @Autowired TransactionService transactionService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private TransactionService transactionService;
 
     public @Autowired DataLoader() {
         System.out.println("passe-t-on par là ?");

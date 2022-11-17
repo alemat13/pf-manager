@@ -3,12 +3,18 @@ package com.pfmanager.core.entity.transaction;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.pfmanager.core.entity.User;
 
 @Entity
 public class TransactionMapping {
+    private @Id @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    ) Long id;
     private @ManyToOne(
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL
@@ -17,7 +23,10 @@ public class TransactionMapping {
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL
     ) Transaction targetTransaction;
-    private User user;
+    private @ManyToOne (
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL
+    ) User user;
     private Double part;
 
     public Transaction getTargetTransaction() {
