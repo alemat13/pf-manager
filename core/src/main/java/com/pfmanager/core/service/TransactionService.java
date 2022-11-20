@@ -40,29 +40,29 @@ public class TransactionService {
         ).setScale(2, RoundingMode.HALF_EVEN);
     }
 
-    private Iterable<TransactionMapping> createTransactionMappings(List<Transaction> sourceTransactions, List<Transaction> targetTransactions) {
-        if(sourceTransactions.stream().filter(t -> ! t.getActive()).count() > 0) {
+    private BigDecimal getTotalSourceAmount(List<TransactionMapping> transactionMappings) {
+        return getTotalAmount(transactionMappings.stream().map(tm -> tm.getSourceTransaction()).toList());
+    }
+    private BigDecimal getTotalTargetAmount(List<TransactionMapping> transactionMappings) {
+        return getTotalAmount(transactionMappings.stream().map(tm -> tm.getTargetTransaction()).toList());
+    }
+
+    private Iterable<TransactionMapping> createTransactionMappings(List<TransactionMapping> transactionMappings) {
+        if(transactionMappings.stream().filter(t -> ! t.getSourceTransaction().getActive()).count() > 0) {
             throw new Error("All source transactions must be active");
         }
-        BigDecimal sourceTotalAmount = this.getTotalAmount(sourceTransactions);
-        BigDecimal targetTotalAmount = this.getTotalAmount(targetTransactions);
+        BigDecimal sourceTotalAmount = this.getTotalSourceAmount(transactionMappings);
+        BigDecimal targetTotalAmount = this.getTotalTargetAmount(transactionMappings);
         if( ! sourceTotalAmount.equals(targetTotalAmount) ) {
             throw new Error("The sum of the source transaction amount is not equal to the sum of targets");
         }
-        List<TransactionMapping> transactionMappings = new ArrayList<>();
-        sourceTransactions.forEach(sourceTransaction -> {
-            targetTransactions.forEach(targetTransaction -> {
-                targetTransaction.setActive(true);
-                this.transactionRepository.save(targetTransaction);
-                TransactionMapping transactionMapping = new TransactionMapping();
-                transactionMapping.setSourceTransaction(sourceTransaction);
-                transactionMapping.setTargetTransaction(targetTransaction);
-                transactionMappings.add(transactionMapping);
-            });
-            sourceTransaction.setActive(false);
-            this.transactionRepository.save(sourceTransaction);
+        transactionMappings.forEach(tm -> {
+            tm.getSourceTransaction().setActive(false);
+            this.transactionRepository.save(tm.getSourceTransaction());
+            tm.getTargetTransaction().setActive(true);
+            this.transactionRepository.save(tm.getTargetTransaction());
         });
-         return this.transactionMappingRepository.saveAll(transactionMappings);
+        return this.transactionMappingRepository.saveAll(transactionMappings);
     }
 
     private void deleteTransactionMapping(Transaction sourceTransaction, Transaction targetTransaction) {
