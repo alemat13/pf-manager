@@ -1,9 +1,7 @@
 package com.pfmanager.core.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,9 +18,8 @@ public class Account {
     private String number;
     private String name;
     private @ManyToMany (
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.PERSIST
-    ) List<User> owners = new ArrayList<>();
+        fetch = FetchType.LAZY
+    ) List<User> owners;
     private @ManyToOne(fetch = FetchType.LAZY) Currency currency;
     private @ManyToOne(
         fetch = FetchType.LAZY

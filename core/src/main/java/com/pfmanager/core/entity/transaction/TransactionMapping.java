@@ -2,7 +2,6 @@ package com.pfmanager.core.entity.transaction;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,16 +17,13 @@ public class TransactionMapping {
         strategy = GenerationType.IDENTITY
     ) Long id;
     private @ManyToOne(
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.MERGE
+        fetch = FetchType.LAZY
     ) Transaction sourceTransaction;
     private @ManyToOne (
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.MERGE
+        fetch = FetchType.LAZY
     ) Transaction targetTransaction;
     private @ManyToOne (
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.PERSIST
+        fetch = FetchType.LAZY
     ) User user;
     private BigDecimal part;
 

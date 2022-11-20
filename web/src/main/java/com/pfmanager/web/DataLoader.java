@@ -58,11 +58,11 @@ public class DataLoader {
         );
         this.accountService.saveAllAcounts(Arrays.asList(pierreAccount, paulAccount, jointAccount));
 
-        pierreAccount.getOwners().add(pierre);
+        pierreAccount.setOwners(Arrays.asList(pierre));
         this.accountService.saveAccount(pierreAccount);
-        paulAccount.getOwners().add(paul);
+        paulAccount.setOwners(Arrays.asList(paul));
         this.accountService.saveAccount(paulAccount);
-        jointAccount.getOwners().addAll(Arrays.asList(pierre, paul));
+        jointAccount.setOwners(Arrays.asList(pierre, paul));
         this.accountService.saveAccount(jointAccount);
 
         TransactionCategory groceries = new TransactionCategory("Groceries");

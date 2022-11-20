@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -37,8 +36,7 @@ public class Transaction {
         fetch = FetchType.LAZY
     ) TransactionCategory category;
     private @ManyToMany (
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.PERSIST
+        fetch = FetchType.LAZY
     ) List<TransactionLabel> labels;
     private @OneToMany(mappedBy = "sourceTransaction") List<TransactionMapping> sourceMappings;
     private @OneToMany(mappedBy = "targetTransaction") List<TransactionMapping> targetMappings;
