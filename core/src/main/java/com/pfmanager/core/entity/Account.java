@@ -21,7 +21,7 @@ public class Account {
     private String name;
     private @ManyToMany (
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.PERSIST
     ) List<User> owners = new ArrayList<>();
     private @ManyToOne(fetch = FetchType.LAZY) Currency currency;
     private @ManyToOne(

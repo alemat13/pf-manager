@@ -19,15 +19,15 @@ public class TransactionMapping {
     ) Long id;
     private @ManyToOne(
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.MERGE
     ) Transaction sourceTransaction;
     private @ManyToOne (
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.MERGE
     ) Transaction targetTransaction;
     private @ManyToOne (
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.PERSIST
     ) User user;
     private BigDecimal part;
 

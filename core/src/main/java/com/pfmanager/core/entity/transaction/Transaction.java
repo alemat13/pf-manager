@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -35,9 +36,9 @@ public class Transaction {
     private @ManyToOne(
         fetch = FetchType.LAZY
     ) TransactionCategory category;
-    private @OneToMany (
+    private @ManyToMany (
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.PERSIST
     ) List<TransactionLabel> labels;
     private @OneToMany(mappedBy = "sourceTransaction") List<TransactionMapping> sourceMappings;
     private @OneToMany(mappedBy = "targetTransaction") List<TransactionMapping> targetMappings;

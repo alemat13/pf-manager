@@ -53,7 +53,6 @@ public class TransactionService {
         sourceTransactions.forEach(sourceTransaction -> {
             targetTransactions.forEach(targetTransaction -> {
                 targetTransaction.setActive(true);
-                targetTransaction = this.transactionRepository.save(targetTransaction);
                 TransactionMapping transactionMapping = new TransactionMapping();
                 transactionMapping.setSourceTransaction(sourceTransaction);
                 transactionMapping.setTargetTransaction(targetTransaction);
@@ -61,7 +60,11 @@ public class TransactionService {
             });
             sourceTransaction.setActive(false);
         });
-        return this.transactionMappingRepository.saveAll(transactionMappings);
+        transactionMappings.forEach(tm -> {
+            this.transactionMappingRepository.save(tm);
+            System.out.println("Saving is OK");
+        });
+        return transactionMappings;
     }
 
     private void deleteTransactionMapping(Transaction sourceTransaction, Transaction targetTransaction) {

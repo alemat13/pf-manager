@@ -16,7 +16,7 @@ public class TransactionCategory {
     private String name;
     private @ManyToOne (
         fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.PERSIST
     ) TransactionCategory parent;
 
     public TransactionCategory() {}
