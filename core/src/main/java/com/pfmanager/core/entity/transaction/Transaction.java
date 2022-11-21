@@ -14,12 +14,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.pfmanager.core.entity.Account;
 import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.TransactionLabel;
 
 @Entity
-public class Transaction {
+public abstract class Transaction {
     private @Id @GeneratedValue(
         strategy = GenerationType.IDENTITY
     ) Long id;
@@ -31,15 +30,12 @@ public class Transaction {
     private Boolean active = true;
     private @ManyToOne(
         fetch = FetchType.LAZY
-    ) Account account;
-    private @ManyToOne(
-        fetch = FetchType.LAZY
     ) TransactionCategory category;
     private @ManyToMany (
         fetch = FetchType.LAZY
     ) List<TransactionLabel> labels;
-    private @OneToMany(mappedBy = "sourceTransaction") List<TransactionMapping> sourceMappings;
-    private @OneToMany(mappedBy = "targetTransaction") List<TransactionMapping> targetMappings;
+    private @OneToMany(fetch=FetchType.LAZY, mappedBy =  "parentTransaction") List<PartialTransaction> childTransactions;
+    private @ManyToOne(fetch = FetchType.LAZY) TransactionGroup parentTransaction;
 
     public Transaction(Date postingDate, BigDecimal amount, String description) {
         this.postingDate = postingDate;
@@ -104,14 +100,6 @@ public class Transaction {
         this.memo = memo;
     }
 
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
     public TransactionCategory getCategory() {
         return category;
     }
@@ -136,19 +124,4 @@ public class Transaction {
         this.active = active;
     }
 
-    public List<TransactionMapping> getSourceMappings() {
-        return sourceMappings;
-    }
-
-    public void setSourceMappings(List<TransactionMapping> sourceMapping) {
-        this.sourceMappings = sourceMapping;
-    }
-
-    public List<TransactionMapping> getTargetMappings() {
-        return targetMappings;
-    }
-
-    public void setTargetMappings(List<TransactionMapping> targetMapping) {
-        this.targetMappings = targetMapping;
-    }
 }

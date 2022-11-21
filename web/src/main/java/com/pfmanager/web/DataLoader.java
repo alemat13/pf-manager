@@ -15,7 +15,7 @@ import com.pfmanager.core.entity.Bank;
 import com.pfmanager.core.entity.Currency;
 import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.User;
-import com.pfmanager.core.entity.transaction.Transaction;
+import com.pfmanager.core.entity.transaction.AccountTransaction;
 import com.pfmanager.core.service.AccountService;
 import com.pfmanager.core.service.TransactionService;
 import com.pfmanager.core.service.UserService;
@@ -69,7 +69,7 @@ public class DataLoader {
         groceries.setParent(new TransactionCategory("Every day expenses"));
         this.transactionService.save(groceries);
 
-        Transaction carrefour = new Transaction(new Date(), 33.56, "Carrefour");
+        AccountTransaction carrefour = new AccountTransaction(new Date(), 33.56, "Carrefour", jointAccount);
         carrefour.setCategory(groceries);
         carrefour.setAccount(jointAccount);
         this.transactionService.createTransaction(carrefour);

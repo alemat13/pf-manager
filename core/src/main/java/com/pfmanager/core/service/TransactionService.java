@@ -1,29 +1,30 @@
 package com.pfmanager.core.service;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pfmanager.core.entity.transaction.TransactionMapping;
 import com.pfmanager.core.entity.TransactionCategory;
 import com.pfmanager.core.entity.User;
+import com.pfmanager.core.entity.transaction.PartialTransaction;
 import com.pfmanager.core.entity.transaction.Transaction;
+import com.pfmanager.core.entity.transaction.TransactionGroup;
+import com.pfmanager.core.repository.transaction.PartialTransactionRepository;
 import com.pfmanager.core.repository.transaction.TransactionCategoryRepository;
-import com.pfmanager.core.repository.transaction.TransactionMappingRepository;
+import com.pfmanager.core.repository.transaction.TransactionGroupRepository;
 import com.pfmanager.core.repository.transaction.TransactionRepository;
 
 @Service
 public class TransactionService {
     private @Autowired TransactionRepository transactionRepository;
-    private @Autowired TransactionMappingRepository transactionMappingRepository;
     private @Autowired TransactionCategoryRepository transactionCategoryRepository;
+    private @Autowired TransactionGroupRepository transactionGroupRepository;
+    private @Autowired PartialTransactionRepository partialTransactionRepository;
 
     public Transaction createTransaction(Transaction transaction) {
         return this.transactionRepository.save(transaction);
@@ -33,104 +34,85 @@ public class TransactionService {
         return this.transactionRepository.findAll();
     }
 
-    private BigDecimal getTotalAmount(List<Transaction> transactions) {
-        return transactions.stream().map(t -> t.getAmount()).reduce(
+    private BigDecimal getTotalAmount(List<? extends Transaction> targetTransactions) {
+        return targetTransactions.stream().map(t -> t.getAmount()).reduce(
             BigDecimal.ZERO,
             (a, b) -> a.add(b).setScale(2, RoundingMode.HALF_EVEN)
         ).setScale(2, RoundingMode.HALF_EVEN);
     }
 
-    private BigDecimal getTotalSourceAmount(List<TransactionMapping> transactionMappings) {
-        return getTotalAmount(transactionMappings.stream().map(tm -> tm.getSourceTransaction()).toList());
-    }
-    private BigDecimal getTotalTargetAmount(List<TransactionMapping> transactionMappings) {
-        return getTotalAmount(transactionMappings.stream().map(tm -> tm.getTargetTransaction()).toList());
+    private void duplicateTransaction(Transaction sourceTransaction, Transaction targetTransaction) {
+        targetTransaction.setCategory(sourceTransaction.getCategory());
+        targetTransaction.setDescription(sourceTransaction.getDescription());
+        targetTransaction.setMemo(sourceTransaction.getMemo());
+        targetTransaction.setPostingDate(sourceTransaction.getPostingDate());
+        targetTransaction.setTransactionDate(sourceTransaction.getTransactionDate());
     }
 
-    private Iterable<TransactionMapping> createTransactionMappings(List<TransactionMapping> transactionMappings) {
-        if(transactionMappings.stream().filter(t -> ! t.getSourceTransaction().getActive()).count() > 0) {
+    public TransactionGroup groupTransactions(List<Transaction> sourceTransactions, Transaction transactionModel) {
+        if(sourceTransactions.stream().filter(t -> ! t.getActive()).count() > 0) {
             throw new Error("All source transactions must be active");
         }
-        BigDecimal sourceTotalAmount = this.getTotalSourceAmount(transactionMappings);
-        BigDecimal targetTotalAmount = this.getTotalTargetAmount(transactionMappings);
-        if( ! sourceTotalAmount.equals(targetTotalAmount) ) {
-            throw new Error("The sum of the source transaction amount is not equal to the sum of targets");
-        }
-        transactionMappings.forEach(tm -> {
-            tm.getSourceTransaction().setActive(false);
-            this.transactionRepository.save(tm.getSourceTransaction());
-            tm.getTargetTransaction().setActive(true);
-            this.transactionRepository.save(tm.getTargetTransaction());
+        TransactionGroup transactionGroup = new TransactionGroup();
+        duplicateTransaction(transactionModel, transactionGroup);
+
+        transactionGroup.setAmount(getTotalAmount(sourceTransactions));
+        transactionGroup.setChildTransactions(sourceTransactions);
+        transactionGroup.setActive(true);
+        sourceTransactions.forEach(t -> {
+            t.setActive(false);
+            this.transactionRepository.save(t);
         });
-        return this.transactionMappingRepository.saveAll(transactionMappings);
+        return this.transactionGroupRepository.save(transactionGroup);
     }
 
-    private void deleteTransactionMapping(Transaction sourceTransaction, Transaction targetTransaction) {
-        List<TransactionMapping> transactionMappings = new ArrayList<>();
-        if(sourceTransaction == null) {
-            if (targetTransaction == null) {
-                throw new Error("One of sourceTransaction/targetTransaction must be provided, none provided");
-            }
-            else {
-                transactionMappings = targetTransaction.getTargetMappings();
-            }
-        }
-        else {
-            if(targetTransaction == null) {
-                transactionMappings = sourceTransaction.getSourceMappings();
-            }
-            else {
-                throw new Error("One of sourceTransaction/targetTransaction must be provided, two provided");
-            }
-        }
-        if(transactionMappings.stream().filter(tm -> tm.getSourceTransaction().getActive()).count() > 0) {
-            throw new Error("All source transactions must be inactive");
-        }
-        if(transactionMappings.stream().filter(tm -> ! tm.getTargetTransaction().getActive()).count() > 0) {
-            throw new Error("All target transactions must be active");
-        }
-        transactionMappings.forEach(tm -> {
-            this.transactionRepository.delete(tm.getTargetTransaction());
-            tm.getSourceTransaction().setActive(true);
-            this.transactionRepository.save(tm.getSourceTransaction());
+    public TransactionGroup groupTransactions(List<Transaction> sourceTransactions) {
+        return groupTransactions(sourceTransactions, sourceTransactions.get(0));
+    }
+
+    public void undivideTransaction(TransactionGroup transactionGroup) {
+        transactionGroup.getChildTransactions().forEach(t -> {
+            t.setActive(true);
+            this.transactionRepository.save(t);
         });
-        this.transactionMappingRepository.deleteAll(transactionMappings);
+        this.transactionGroupRepository.delete(transactionGroup);
     }
 
-    public Iterable<TransactionMapping> groupTransactions(List<Transaction> sourceTransactions, Transaction targetTransaction) {
-        return this.createTransactionMappings(sourceTransactions, Arrays.asList(targetTransaction));
+    private Iterable<PartialTransaction> divideTransaction(Transaction sourceTransaction, List<PartialTransaction> targetTransactions) {
+        if(! sourceTransaction.getActive()) {
+            throw new Error("Source transaction must be active");
+        }
+        if(getTotalAmount(targetTransactions).equals(sourceTransaction.getAmount())) {
+            throw new Error("Target transactions amount sum not equal to source transaction amount");
+        }
+        targetTransactions.forEach(t -> {
+            t.setActive(true);
+            t.setParentTransaction(sourceTransaction);
+            this.partialTransactionRepository.save(t);
+        });
+        sourceTransaction.setActive(false);
+        return this.partialTransactionRepository.saveAll(targetTransactions);
     }
 
-    public void ungroupTransaction(Transaction targetTransaction) {
-        this.deleteTransactionMapping(null, targetTransaction);
+    public Iterable<PartialTransaction> splitTransaction(Transaction sourceTransaction, List<BigDecimal> amounts) {
+        List<PartialTransaction> partialTransactions = new ArrayList<>();
+        amounts.forEach(amount -> {
+            PartialTransaction pt = new PartialTransaction();
+            duplicateTransaction(sourceTransaction, pt);
+            pt.setAmount(amount);
+            partialTransactions.add(pt);
+        });
+        return divideTransaction(sourceTransaction, partialTransactions);
     }
 
-    public Iterable<TransactionMapping> splitTransaction(Transaction sourceTransaction, List<Transaction> targetTransactions) {
-        return this.createTransactionMappings(Arrays.asList(sourceTransaction), targetTransactions);
-    }
-
-    public void unsplitTransaction(Transaction sourceTransaction) {
-        this.deleteTransactionMapping(sourceTransaction, null);
-    }
-
-    public TransactionCategory save(TransactionCategory transactionCategory) {
-        return this.transactionCategoryRepository.save(transactionCategory);
-    }
-
-    public Iterable<TransactionMapping> shareTransaction(Transaction sourceTransaction, HashMap<User, BigDecimal> splitMapping, User roundingAdjustUser) {
-        HashMap<User, Transaction> targetTransactions = new HashMap<>();
-        BigDecimal partSum = splitMapping.entrySet().stream().map(k -> k.getValue()).reduce(BigDecimal.ZERO, BigDecimal::add);
+    public Iterable<PartialTransaction> shareTransaction(Transaction sourceTransaction, HashMap<User, BigDecimal> splitMapping, User roundingAdjustUser) {
+        HashMap<User, PartialTransaction> targetTransactions = new HashMap<>();
+        BigDecimal partsSum = splitMapping.entrySet().stream().map(k -> k.getValue()).reduce(BigDecimal.ZERO, BigDecimal::add);
         splitMapping.forEach((user, part) -> {
-            Transaction transaction = new Transaction();
-            transaction.setCategory(sourceTransaction.getCategory());
-            transaction.setDescription(sourceTransaction.getDescription());
-            transaction.setLabels(sourceTransaction.getLabels());
-            transaction.setMemo(sourceTransaction.getMemo());
-            transaction.setPostingDate(sourceTransaction.getPostingDate());
-            transaction.setTransactionDate(sourceTransaction.getTransactionDate());
+            PartialTransaction transaction = new PartialTransaction();
+            duplicateTransaction(sourceTransaction, transaction);
 
-            transaction.setAccount(null);
-            transaction.setAmount(roundCent(sourceTransaction.getAmount().multiply(part).divide(partSum).setScale(2, RoundingMode.HALF_EVEN)));
+            transaction.setAmount(sourceTransaction.getAmount().multiply(part).divide(partsSum).setScale(2, RoundingMode.HALF_EVEN));
             targetTransactions.put(user, transaction);
         });
         BigDecimal totalRoundedAmounts = targetTransactions.entrySet().stream().map(
@@ -143,9 +125,11 @@ public class TransactionService {
                 )
             ).setScale(2, RoundingMode.HALF_EVEN)
         );
-        return this.splitTransaction(sourceTransaction, new ArrayList<Transaction>(targetTransactions.values()));
+        return this.divideTransaction(sourceTransaction, new ArrayList<PartialTransaction>(targetTransactions.values()));
     }
-    private static BigDecimal roundCent(BigDecimal value) {
-        return value.round(new MathContext(2, RoundingMode.HALF_EVEN));
+
+    public TransactionCategory save(TransactionCategory transactionCategory) {
+        return this.transactionCategoryRepository.save(transactionCategory);
     }
+
 }
