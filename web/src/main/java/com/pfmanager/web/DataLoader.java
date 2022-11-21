@@ -14,8 +14,10 @@ import com.pfmanager.core.entity.Account;
 import com.pfmanager.core.entity.Bank;
 import com.pfmanager.core.entity.Currency;
 import com.pfmanager.core.entity.TransactionCategory;
+import com.pfmanager.core.entity.TransactionLabel;
 import com.pfmanager.core.entity.User;
 import com.pfmanager.core.entity.transaction.AccountTransaction;
+import com.pfmanager.core.entity.transaction.TransactionGroup;
 import com.pfmanager.core.service.AccountService;
 import com.pfmanager.core.service.TransactionService;
 import com.pfmanager.core.service.UserService;
@@ -65,14 +67,25 @@ public class DataLoader {
         jointAccount.setOwners(Arrays.asList(pierre, paul));
         this.accountService.saveAccount(jointAccount);
 
+        TransactionLabel tbcLabel = this.transactionService.save(
+            new TransactionLabel("TBC", "transactions to be checked")
+        );
+
         TransactionCategory groceries = new TransactionCategory("Groceries");
         groceries.setParent(new TransactionCategory("Every day expenses"));
         this.transactionService.save(groceries);
 
-        AccountTransaction carrefour = new AccountTransaction(new Date(), 33.56, "Carrefour", jointAccount);
-        carrefour.setCategory(groceries);
-        carrefour.setAccount(jointAccount);
-        this.transactionService.createTransaction(carrefour);
+        AccountTransaction carrefourJoint = new AccountTransaction(new Date(), 33.56, "Carrefour", jointAccount);
+        carrefourJoint.setCategory(groceries);
+        carrefourJoint.setLabels(Arrays.asList(tbcLabel));
+        this.transactionService.saveTransaction(carrefourJoint);
+
+        AccountTransaction carrefourPierre = new AccountTransaction(new Date(), 25, "Carrefour", pierreAccount);
+        carrefourPierre.setCategory(groceries);
+        carrefourPierre.setLabels(Arrays.asList(tbcLabel));
+        this.transactionService.saveTransaction(carrefourPierre);
+
+        TransactionGroup carrefour = this.transactionService.groupTransactions(Arrays.asList(carrefourJoint, carrefourPierre));
 
         HashMap<User, BigDecimal> carrefourMapping = new HashMap<>();
         carrefourMapping.put(paul, new BigDecimal(2));

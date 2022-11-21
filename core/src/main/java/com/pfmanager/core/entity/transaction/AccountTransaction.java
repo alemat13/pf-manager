@@ -14,6 +14,8 @@ public class AccountTransaction extends Transaction {
     private @ManyToOne(
         fetch = FetchType.LAZY
     ) Account account;
+
+    public AccountTransaction() { }
     
     public AccountTransaction(Date postingDate, BigDecimal amount, String description, Account account) {
         super(postingDate, amount, description);

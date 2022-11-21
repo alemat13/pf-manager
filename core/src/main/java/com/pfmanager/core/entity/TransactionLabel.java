@@ -13,6 +13,17 @@ public class TransactionLabel {
     private String name;
     private String description;
     
+    public TransactionLabel() { }
+
+    public TransactionLabel(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public TransactionLabel(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

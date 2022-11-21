@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pfmanager.core.entity.TransactionCategory;
+import com.pfmanager.core.entity.TransactionLabel;
 import com.pfmanager.core.entity.User;
 import com.pfmanager.core.entity.transaction.PartialTransaction;
 import com.pfmanager.core.entity.transaction.Transaction;
@@ -17,6 +18,7 @@ import com.pfmanager.core.entity.transaction.TransactionGroup;
 import com.pfmanager.core.repository.transaction.PartialTransactionRepository;
 import com.pfmanager.core.repository.transaction.TransactionCategoryRepository;
 import com.pfmanager.core.repository.transaction.TransactionGroupRepository;
+import com.pfmanager.core.repository.transaction.TransactionLabelRepository;
 import com.pfmanager.core.repository.transaction.TransactionRepository;
 
 @Service
@@ -25,8 +27,9 @@ public class TransactionService {
     private @Autowired TransactionCategoryRepository transactionCategoryRepository;
     private @Autowired TransactionGroupRepository transactionGroupRepository;
     private @Autowired PartialTransactionRepository partialTransactionRepository;
+    private @Autowired TransactionLabelRepository transactionLabelRepository;
 
-    public Transaction createTransaction(Transaction transaction) {
+    public Transaction saveTransaction(Transaction transaction) {
         return this.transactionRepository.save(transaction);
     }
 
@@ -112,6 +115,7 @@ public class TransactionService {
             PartialTransaction transaction = new PartialTransaction();
             duplicateTransaction(sourceTransaction, transaction);
 
+            transaction.setPart(part);
             transaction.setAmount(sourceTransaction.getAmount().multiply(part).divide(partsSum).setScale(2, RoundingMode.HALF_EVEN));
             transaction.setOwner(user);
             targetTransactions.put(user, transaction);
@@ -129,8 +133,16 @@ public class TransactionService {
         return this.divideTransaction(sourceTransaction, new ArrayList<PartialTransaction>(targetTransactions.values()));
     }
 
-    public TransactionCategory save(TransactionCategory transactionCategory) {
-        return this.transactionCategoryRepository.save(transactionCategory);
+    public TransactionCategory save(TransactionCategory category) {
+        TransactionCategory parentCategory = category.getParent();
+        if (parentCategory != null && parentCategory.getParent() != null) {
+            throw new Error("Only 2 levels of category authorized");
+        }
+        return this.transactionCategoryRepository.save(category);
+    }
+
+    public TransactionLabel save(TransactionLabel transactionLabel) {
+        return this.transactionLabelRepository.save(transactionLabel);
     }
 
 }
