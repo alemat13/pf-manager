@@ -3,11 +3,13 @@ package com.pfmanager.core.entity.transaction;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 import com.pfmanager.core.entity.Account;
 
+@Entity
 public class AccountTransaction extends Transaction {
     private @ManyToOne(
         fetch = FetchType.LAZY

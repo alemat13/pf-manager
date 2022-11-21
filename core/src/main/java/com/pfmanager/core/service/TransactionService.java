@@ -82,7 +82,7 @@ public class TransactionService {
         if(! sourceTransaction.getActive()) {
             throw new Error("Source transaction must be active");
         }
-        if(getTotalAmount(targetTransactions).equals(sourceTransaction.getAmount())) {
+        if(! getTotalAmount(targetTransactions).equals(sourceTransaction.getAmount())) {
             throw new Error("Target transactions amount sum not equal to source transaction amount");
         }
         targetTransactions.forEach(t -> {
@@ -113,6 +113,7 @@ public class TransactionService {
             duplicateTransaction(sourceTransaction, transaction);
 
             transaction.setAmount(sourceTransaction.getAmount().multiply(part).divide(partsSum).setScale(2, RoundingMode.HALF_EVEN));
+            transaction.setOwner(user);
             targetTransactions.put(user, transaction);
         });
         BigDecimal totalRoundedAmounts = targetTransactions.entrySet().stream().map(
