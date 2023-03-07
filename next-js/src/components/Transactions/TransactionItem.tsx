@@ -1,10 +1,10 @@
 import { Transaction } from "@/models/transaction";
 
-const TransactionComponent: React.FC<{ transaction: Transaction }> = ({
+const TransactionItem: React.FC<{ transaction: Transaction }> = ({
   transaction,
 }) => {
   return (
-    <div>
+    <ul>
       <h3>{transaction.title}</h3>
       <div>
         <span>Account: </span>
@@ -22,8 +22,8 @@ const TransactionComponent: React.FC<{ transaction: Transaction }> = ({
         <span>Transaction date: </span>
         <span>{transaction.transactionDate.toDateString()}</span>
       </div>
-    </div>
+    </ul>
   );
 };
 
-export default TransactionComponent;
+export default TransactionItem;

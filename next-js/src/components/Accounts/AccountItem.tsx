@@ -1,11 +1,11 @@
 import { Account } from "@/models/account";
 
-const AccountComponent: React.FC<{account: Account}> = ({account}) => {
-    return <div>
+const AccountItem: React.FC<{account: Account}> = ({account}) => {
+    return <ul>
         <h3>{account.title}</h3>
         <span>Bank name: </span>{account.bankName}
         <span>Owners: </span>{account.owners.map(o => o.userName).join(', ')}
-    </div>
+    </ul>
 }
 
-export default AccountComponent;
+export default AccountItem;
