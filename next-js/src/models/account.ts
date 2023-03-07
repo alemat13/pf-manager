@@ -1,6 +1,6 @@
-import { User } from "./user";
+import User from "./user";
 
-export class Account {
+export default class Account {
     id: string | undefined;
     title: string;
     bankName: string;

@@ -1,4 +1,4 @@
-import { User } from "@/models/user";
+import User from "@/models/user";
 
 const UserItem: React.FC<{user: User}> = ({user}) => {
     return <ul>

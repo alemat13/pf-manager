@@ -1,9 +1,9 @@
-import { Transaction } from "@/models/transaction";
-import { DUMMY_ACCOUNTS } from "./dummy-accounts";
+import Transaction from "@/models/transaction";
+import DUMMY_ACCOUNTS from "./dummy-accounts";
 
 const [bousorama, hsbc] = DUMMY_ACCOUNTS;
 
-export const DUMMY_TRANSACTIONS: Transaction[] = [
+const DUMMY_TRANSACTIONS: Transaction[] = [
   new Transaction(
     "Carrefour Market",
     35.95,
@@ -29,3 +29,5 @@ export const DUMMY_TRANSACTIONS: Transaction[] = [
     hsbc
   ),
 ];
+
+export default DUMMY_TRANSACTIONS;

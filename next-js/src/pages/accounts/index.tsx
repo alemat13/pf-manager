@@ -1,11 +1,8 @@
-import AccountItem from "@/components/Accounts/AccountItem";
-import { DUMMY_ACCOUNTS } from "@/dummies/dummy-accounts";
+import AccountsList from "@/components/Accounts/AccountsList";
+import DUMMY_ACCOUNTS from "@/dummies/dummy-accounts";
 
 const AccountsPage = () => {
-    const accounts = DUMMY_ACCOUNTS;
-    return <ul>
-        {accounts.map(a => <AccountItem account={a} key={a.id} />)}
-    </ul>;
+    return <AccountsList items={DUMMY_ACCOUNTS} />;
 }
 
 export default AccountsPage;

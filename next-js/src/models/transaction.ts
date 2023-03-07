@@ -1,6 +1,6 @@
-import { Account } from "./account";
+import Account from "./account";
 
-export class Transaction {
+export default class Transaction {
   id?: string;
   title: string;
   description?: string;
