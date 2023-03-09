@@ -1,12 +1,18 @@
-import { MongoClient, Collection, ObjectId, Filter } from 'mongodb';
+import { MongoClient, Collection, ObjectId, Filter, OptionalUnlessRequiredId } from 'mongodb';
 
-abstract class MongoRepository<T> {
+export default class MongoRepository<T extends {}> {
     private client: MongoClient;
     private collection: Collection<T>;
 
-    constructor(uri: string, dbName: string, collectionName: string) {
-        this.client = new MongoClient(uri, { useUnifiedTopology: true });
-        this.collection = this.client.db(dbName).collection(collectionName);
+    constructor(collectionName: string) {
+        const {
+            DB_URL : url,
+            DB_USER : user,
+            DB_PASSWORD : password,
+            DB_NAME : database
+        } = process.env;
+        this.client = new MongoClient(`mongodb+srv://${user}:${password}@${url}/${database}?retryWrites=true&w=majority`);
+        this.collection = this.client.db(database).collection<T>(collectionName);
     }
 
     async connect(): Promise<void> {
@@ -17,29 +23,33 @@ abstract class MongoRepository<T> {
         await this.client.close();
     }
 
-    async create(item: T): Promise<T> {
-        const result = await this.collection.insertOne(item);
-        return result.ops[0];
+    async create(item: T): Promise<string> {
+        const result = await this.collection.insertOne(item as OptionalUnlessRequiredId<T>);
+        return result.insertedId.toString();
     }
 
     async findById(id: string): Promise<T | null> {
-        const result = await this.collection.findOne({ _id: id });
+        const result = await this.collection.findOne({ _id: new ObjectId(id) } as Filter<T>);
         return result as T | null;
     }
 
     async findAll(): Promise<T[]> {
-        const cursor = await this.collection.find();
+        const cursor = this.collection.find();
         const result = await cursor.toArray();
         return result as T[];
     }
 
     async update(id: string, item: T): Promise<boolean> {
-        const result = await this.collection.replaceOne({ _id: new ObjectId(id) }, item);
+        const result = await this.collection.replaceOne(this.getIdFilter(id), item);
         return result.modifiedCount > 0;
     }
 
     async delete(id: string): Promise<boolean> {
-        const result = await this.collection.deleteOne({ _id: id });
+        const result = await this.collection.deleteOne(this.getIdFilter(id));
         return result.deletedCount > 0;
+    }
+
+    private getIdFilter(id: string) {
+        return {_id: new ObjectId(id)} as Filter<T>;
     }
 }

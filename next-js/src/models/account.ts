@@ -1,7 +1,7 @@
 import User from "./user";
 
 export default class Account {
-    id: string | undefined;
+    id?: string;
     title: string;
     bankName: string;
     owners: User[] = [];
@@ -21,4 +21,5 @@ export default class Account {
             this.owners = owners || [];
         }
     }
+    
 }
