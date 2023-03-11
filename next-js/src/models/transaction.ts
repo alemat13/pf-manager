@@ -1,4 +1,5 @@
 import Account from "./account";
+import { PartialObject } from "./partial-object";
 
 export default class Transaction {
   _id?: string;
@@ -6,9 +7,9 @@ export default class Transaction {
   description?: string;
   amount: number;
   transactionDate: Date;
-  parent?: Transaction;
-  children: Transaction[] = [];
-  account?: Account;
+  parent?: PartialObject<Transaction>;
+  children: PartialObject<Transaction>[] = [];
+  account?: PartialObject<Account>;
 
   constructor(
     title: string,
@@ -23,7 +24,6 @@ export default class Transaction {
     this.transactionDate = transactionDate;
     this._id = id;
     this.description = description;
-    this.account = account;
   }
 
   isActive() {
