@@ -26,16 +26,16 @@ export async function getServerSideProps() {
     DUMMY_USERS.forEach(async (user) => await repositories.user.create(user));
     DUMMY_ACCOUNTS.forEach(
       async (account) => {
-        const owners = account.owners.map(u => ({ id: u.id } as User));
+        const owners = account.owners.map(u => ({ _id: u._id } as User));
         await repositories.account.create({ ...account, owners })
       }
     );
     DUMMY_TRANSACTIONS.forEach(
       async (transaction) => {
-        const children = transaction.children.map(t => ({ id: t.id } as Transaction));
+        const children = transaction.children.map(t => ({ _id: t._id } as Transaction));
         let account = transaction.account;
         if(account) {
-          account = {id: account.id} as Account;
+          account = {_id: account._id} as Account;
         }
         await repositories.transaction.create({ ...transaction, children, account } as Transaction);
       }

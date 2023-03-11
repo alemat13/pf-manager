@@ -1,7 +1,7 @@
 import Account from "./account";
 
 export default class Transaction {
-  id?: string;
+  _id?: string;
   title: string;
   description?: string;
   amount: number;
@@ -21,7 +21,7 @@ export default class Transaction {
     this.title = title;
     this.amount = amount;
     this.transactionDate = transactionDate;
-    this.id = id;
+    this._id = id;
     this.description = description;
     this.account = account;
   }
