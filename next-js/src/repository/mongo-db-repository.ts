@@ -1,4 +1,3 @@
-import { PartialObject, NotYetCreated } from '@/models/partial-object';
 import { MongoClient, Collection, ObjectId, Filter, OptionalUnlessRequiredId } from 'mongodb';
 
 export default class MongoRepository<T extends {}> {
@@ -24,19 +23,14 @@ export default class MongoRepository<T extends {}> {
         await this.client.close();
     }
 
-    async create(item: NotYetCreated<T>): Promise<T> {
+    async create(item: T): Promise<string> {
         const result = await this.collection.insertOne(item as OptionalUnlessRequiredId<T>);
-        const returnedObj: T = { _id: result.insertedId.toString(), ...item } as unknown as T;
-        return returnedObj;
+        return result.insertedId.toString();
     }
 
     async findById(id: string): Promise<T | null> {
         const result = await this.collection.findOne({ _id: new ObjectId(id) } as Filter<T>);
         return result as T | null;
-    }
-
-    async findByPartial(item: PartialObject<T>): Promise<T | null> {
-        return this.findById(item._id);
     }
 
     async findByIds(id: string): Promise<T[] | null> {
@@ -58,6 +52,10 @@ export default class MongoRepository<T extends {}> {
     async delete(id: string): Promise<boolean> {
         const result = await this.collection.deleteOne(this.getIdFilter(id));
         return result.deletedCount > 0;
+    }
+
+    async drop(): Promise<boolean> {
+        return this.collection.drop();
     }
 
     private getIdFilter(id: string) {

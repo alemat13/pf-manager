@@ -24,7 +24,7 @@ const DUMMY_TRANSACTIONS: Transaction[] = [
     "SFR",
     19.95,
     new Date(),
-    "2",
+    "3",
     "Abonnement SFR Fibre",
     hsbc
   ),
