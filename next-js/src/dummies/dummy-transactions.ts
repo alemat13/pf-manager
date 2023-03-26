@@ -1,4 +1,5 @@
 import Transaction from "@/models/transaction";
+import { ObjectId } from "mongodb";
 import DUMMY_ACCOUNTS from "./dummy-accounts";
 
 const [bousorama, hsbc] = DUMMY_ACCOUNTS;
@@ -8,7 +9,7 @@ const DUMMY_TRANSACTIONS: Transaction[] = [
     "Carrefour Market",
     35.95,
     new Date(),
-    "1",
+    new ObjectId(),
     "Carrefour Market 07/03/2023",
     hsbc
   ),
@@ -16,7 +17,7 @@ const DUMMY_TRANSACTIONS: Transaction[] = [
     "Navigo",
     80.95,
     new Date(),
-    "2",
+    new ObjectId(),
     "Abonnement Navigo",
     bousorama
   ),
@@ -24,7 +25,7 @@ const DUMMY_TRANSACTIONS: Transaction[] = [
     "SFR",
     19.95,
     new Date(),
-    "3",
+    new ObjectId(),
     "Abonnement SFR Fibre",
     hsbc
   ),

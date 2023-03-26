@@ -1,20 +1,21 @@
+import { ObjectId } from "mongodb";
 import Account from "./account";
 
 export default class Transaction {
-  _id?: string;
+  _id?: ObjectId;
   title: string;
   description?: string;
   amount: number;
   transactionDate: Date;
-  parent?: Transaction;
-  children: Transaction[] = [];
+  parents_id: ObjectId[] = [];
+  children_id: Transaction[] = [];
   account?: Account;
 
   constructor(
     title: string,
     amount: number,
     transactionDate: Date,
-    id?: string,
+    id?: ObjectId,
     description?: string,
     account?: Account
   ) {
@@ -26,6 +27,6 @@ export default class Transaction {
   }
 
   isActive() {
-    return this.children.length == 0;
+    return this.children_id.length == 0;
   }
 }

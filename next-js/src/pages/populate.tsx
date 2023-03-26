@@ -17,12 +17,6 @@ const PopulatePage: React.FC<{ state: string; error?: any }> = ({
 export default PopulatePage;
 
 export async function getServerSideProps() {
-  function stripObject<T extends { _id?: string }>(obj: T) {
-    return { _id: obj._id } as T;
-  }
-  function stripObjects<T extends { _id?: string }>(objs: T[]) {
-    return objs.map(o => stripObject(o));
-  }
   try {
     const repositories = {
       user: new MongoRepository<User>("users"),
@@ -30,29 +24,25 @@ export async function getServerSideProps() {
       transaction: new MongoRepository<Transaction>("transactions"),
     };
 
-    await Object.values(repositories).forEach(async r => {
+    for (const repo of [repositories.user, repositories.account, repositories.transaction]) {
       try {
-        await r.drop()
+        await repo.drop()
       } catch (error) {
         console.log('Already droped');
       }
-    });
+    };
 
     DUMMY_USERS.forEach(async (user) => await repositories.user.create(user));
 
     DUMMY_ACCOUNTS.forEach(
       async (account) => {
-        await repositories.account.create({ ...account, owners: stripObjects(account.owners) })
+        await repositories.account.create(account);
       }
     );
 
     DUMMY_TRANSACTIONS.forEach(
       async (transaction) => {
-        await repositories.transaction.create({
-          ...transaction,
-          children: stripObjects(transaction.children),
-          account: transaction.account ? stripObject(transaction.account) : undefined
-        } as Transaction);
+        await repositories.transaction.create(transaction);
       }
     );
   } catch (error) {

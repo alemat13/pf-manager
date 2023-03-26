@@ -21,7 +21,7 @@ export async function getServerSideProps() {
                 _id: account._id?.toString(),
                 owners: allUsers.filter(u => {
                     console.log({account, u});
-                    return (account.owners.find(owner => owner._id === u._id) !== undefined)
+                    return (account.owners_id.find(owner_id => owner_id === u._id) !== undefined)
                 })
             }))
         }
