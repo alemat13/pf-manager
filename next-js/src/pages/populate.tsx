@@ -4,7 +4,7 @@ import DUMMY_USERS from "@/dummies/dummy-users";
 import Account from "@/models/account";
 import Transaction from "@/models/transaction";
 import User from "@/models/user";
-import MongoRepository from "@/repository/mongo-db-repository";
+import MongoRepository from "@/repository/mongo-repository";
 
 const PopulatePage: React.FC<{ state: string; error?: any }> = ({
   state,

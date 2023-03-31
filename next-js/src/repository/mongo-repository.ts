@@ -1,8 +1,8 @@
 import { MongoClient, Collection, ObjectId, Filter, OptionalUnlessRequiredId } from 'mongodb';
 
-export default class MongoRepository<T extends {}> {
+export default abstract class MongoRepository<T_DTO extends {}, T extends {}> {
     private client: MongoClient;
-    private collection: Collection<T>;
+    private collection: Collection<T_DTO>;
 
     constructor(collectionName: string) {
         const {
@@ -12,7 +12,7 @@ export default class MongoRepository<T extends {}> {
             DB_NAME : database
         } = process.env;
         this.client = new MongoClient(`mongodb+srv://${user}:${password}@${url}/${database}?retryWrites=true&w=majority`);
-        this.collection = this.client.db(database).collection<T>(collectionName);
+        this.collection = this.client.db(database).collection<T_DTO>(collectionName);
     }
 
     async connect(): Promise<void> {
@@ -24,27 +24,27 @@ export default class MongoRepository<T extends {}> {
     }
 
     async create(item: T): Promise<string> {
-        const result = await this.collection.insertOne(item as OptionalUnlessRequiredId<T>);
+        const result = await this.collection.insertOne(this.getDTO(item) as OptionalUnlessRequiredId<T_DTO>);
         return result.insertedId.toString();
     }
 
-    async findById(id: string): Promise<T | null> {
-        const result = await this.collection.findOne({ _id: new ObjectId(id) } as Filter<T>);
-        return result as T | null;
+    async findById(id: string): Promise<T_DTO | null> {
+        const result = await this.collection.findOne({ _id: new ObjectId(id) } as Filter<T_DTO>);
+        return result as T_DTO | null;
     }
 
-    async findByIds(id: string): Promise<T[] | null> {
-        const result = await this.collection.find({ _id: { $in: new ObjectId(id)} } as Filter<T>).toArray();
-        return result as T[] | null;
+    async findByIds(id: string): Promise<T_DTO[] | null> {
+        const result = await this.collection.find({ _id: { $in: new ObjectId(id)} } as Filter<T_DTO>).toArray();
+        return result as T_DTO[] | null;
     }
 
-    async findAll(): Promise<T[]> {
+    async findAll(): Promise<T_DTO[]> {
         const cursor = this.collection.find();
         const result = await cursor.toArray();
-        return result as T[];
+        return result as T_DTO[];
     }
 
-    async update(id: string, item: T): Promise<boolean> {
+    async update(id: string, item: T_DTO): Promise<boolean> {
         const result = await this.collection.replaceOne(this.getIdFilter(id), item);
         return result.modifiedCount > 0;
     }
@@ -59,6 +59,9 @@ export default class MongoRepository<T extends {}> {
     }
 
     private getIdFilter(id: string) {
-        return {_id: new ObjectId(id)} as Filter<T>;
+        return {_id: new ObjectId(id)} as Filter<T_DTO>;
     }
+
+    abstract getDTO(item: T): T_DTO;
+    abstract getFromDTO(dto: T_DTO): T;
 }

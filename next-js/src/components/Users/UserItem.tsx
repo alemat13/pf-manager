@@ -7,10 +7,10 @@ const UserItem: React.FC<{ user: User }> = ({ user }) => {
       <Card>
         <h3>{user.userName}</h3>
         <span>Email address: </span>
-        {user.emailAdress && (
-          <a href={`mailto://${user.emailAdress}`}>{user.emailAdress}</a>
+        {user.emailAddress && (
+          <a href={`mailto://${user.emailAddress}`}>{user.emailAddress}</a>
         )}
-        {!user.emailAdress && <p>Unknown</p>}
+        {!user.emailAddress && <p>Unknown</p>}
       </Card>
     </ul>
   );

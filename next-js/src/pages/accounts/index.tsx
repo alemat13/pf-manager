@@ -2,7 +2,7 @@ import AccountsList from "@/components/Accounts/AccountsList";
 import { useDataObjects } from "@/hooks/use-data";
 import Account from "@/models/account";
 import User from "@/models/user";
-import MongoRepository from "@/repository/mongo-db-repository";
+import MongoRepository from "@/repository/mongo-repository";
 import useSWR from 'swr';
 
 const AccountsPage: React.FC<{ items: Account[] }> = ({ items }) => {
@@ -21,7 +21,7 @@ export async function getServerSideProps() {
                 _id: account._id?.toString(),
                 owners: allUsers.filter(u => {
                     console.log({account, u});
-                    return (account.owners_id.find(owner_id => owner_id === u._id) !== undefined)
+                    return (account.owners.find(owner_id => owner_id === u._id) !== undefined)
                 })
             }))
         }
