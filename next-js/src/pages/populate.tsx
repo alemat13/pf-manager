@@ -1,10 +1,9 @@
 import DUMMY_ACCOUNTS from "@/dummies/dummy-accounts";
 import DUMMY_TRANSACTIONS from "@/dummies/dummy-transactions";
 import DUMMY_USERS from "@/dummies/dummy-users";
-import Account from "@/models/account";
-import Transaction from "@/models/transaction";
-import User from "@/models/user";
-import MongoRepository from "@/repository/mongo-repository";
+import AccountRepository from "@/repository/account-repository";
+import TransactionRepository from "@/repository/transaction-repository";
+import UserRepository from "@/repository/user-repository";
 
 const PopulatePage: React.FC<{ state: string; error?: any }> = ({
   state,
@@ -19,12 +18,16 @@ export default PopulatePage;
 export async function getServerSideProps() {
   try {
     const repositories = {
-      user: new MongoRepository<User>("users"),
-      account: new MongoRepository<Account>("accounts"),
-      transaction: new MongoRepository<Transaction>("transactions"),
+      user: new UserRepository(),
+      account: new AccountRepository(),
+      transaction: new TransactionRepository(),
     };
 
-    for (const repo of [repositories.user, repositories.account, repositories.transaction]) {
+    for (const repo of [
+      repositories.user,
+      repositories.account,
+      repositories.transaction
+    ]) {
       try {
         await repo.drop()
       } catch (error) {
@@ -32,17 +35,17 @@ export async function getServerSideProps() {
       }
     };
 
-    DUMMY_USERS.forEach(async (user) => await repositories.user.create(user));
+    DUMMY_USERS.forEach(async (user) => await repositories.user.save(user));
 
     DUMMY_ACCOUNTS.forEach(
       async (account) => {
-        await repositories.account.create(account);
+        await repositories.account.save(account);
       }
     );
 
     DUMMY_TRANSACTIONS.forEach(
       async (transaction) => {
-        await repositories.transaction.create(transaction);
+        await repositories.transaction.save(transaction);
       }
     );
   } catch (error) {

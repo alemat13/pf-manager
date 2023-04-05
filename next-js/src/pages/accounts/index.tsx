@@ -1,28 +1,23 @@
 import AccountsList from "@/components/Accounts/AccountsList";
-import { useDataObjects } from "@/hooks/use-data";
 import Account from "@/models/account";
-import User from "@/models/user";
-import MongoRepository from "@/repository/mongo-repository";
-import useSWR from 'swr';
+import AccountRepository from "@/repository/account-repository";
+import UserRepository from "@/repository/user-repository";
 
 const AccountsPage: React.FC<{ items: Account[] }> = ({ items }) => {
     return <AccountsList items={items} />;
 }
 
 export async function getServerSideProps() {
-    const accountRepo = new MongoRepository<Account>('accounts');
-    const usersRepo = new MongoRepository<User>('users');
-    const accounts = await accountRepo.findAll();
-    const allUsers = await usersRepo.findAll();
+    const accountRepo = new AccountRepository();
+    const usersRepo = new UserRepository();
+    const accounts = await accountRepo.find();
+    const allUsers = await usersRepo.find();
     return {
         props: {
             items: accounts.map(account => ({
                 ...account,
                 _id: account._id?.toString(),
-                owners: allUsers.filter(u => {
-                    console.log({account, u});
-                    return (account.owners.find(owner_id => owner_id === u._id) !== undefined)
-                })
+                owners_test: account.owners,
             }))
         }
     }

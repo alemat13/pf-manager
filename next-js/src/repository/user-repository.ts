@@ -1,14 +1,14 @@
 import User from "@/models/user";
-import MongoRepository from "./mongo-repository";
+import { Schema } from "mongoose"
+import MongooseRepository from "./mongo-repository";
 
-export default class UserRepository extends MongoRepository<User, User> {
-    getDTO(item: User): User {
-        return item;
-    }
-    getFromDTO(dto: User): User {
-        return dto;
-    }
+const userSchema = new Schema<User>({
+    userName: { type: String, required: true },
+    emailAddress: { type: String, required: true}
+})
+
+export default class UserRepository extends MongooseRepository<User> {
     constructor() {
-        super('users');
+        super(userSchema, 'Users');
     }
 }
