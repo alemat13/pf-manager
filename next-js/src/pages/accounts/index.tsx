@@ -9,16 +9,10 @@ const AccountsPage: React.FC<{ items: Account[] }> = ({ items }) => {
 
 export async function getServerSideProps() {
     const accountRepo = new AccountRepository();
-    const usersRepo = new UserRepository();
     const accounts = await accountRepo.find();
-    const allUsers = await usersRepo.find();
     return {
         props: {
-            items: accounts.map(account => ({
-                ...account,
-                _id: account._id?.toString(),
-                owners_test: account.owners,
-            }))
+            items: accounts
         }
     }
 }
