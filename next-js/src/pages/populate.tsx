@@ -35,19 +35,19 @@ export async function getServerSideProps() {
       }
     };
 
-    DUMMY_USERS.forEach(async (user) => await repositories.user.save(user));
+    for (const user of DUMMY_USERS) {
+      await repositories.user.save(user);
+    }
 
-    DUMMY_ACCOUNTS.forEach(
-      async (account) => {
-        await repositories.account.save(account);
-      }
-    );
+    for (const account of DUMMY_ACCOUNTS) {
+      await repositories.account.save(account);
+    }
 
-    DUMMY_TRANSACTIONS.forEach(
-      async (transaction) => {
-        await repositories.transaction.save(transaction);
-      }
-    );
+
+    for (const transaction of DUMMY_TRANSACTIONS) {
+      await repositories.transaction.save(transaction);
+    }
+
   } catch (error) {
     throw error;
   }
